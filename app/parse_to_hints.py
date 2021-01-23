@@ -34,6 +34,8 @@ def chapter_to_hints(passage: str, chapter: int, hint_min: int) -> Chapter:
 def verse_to_hints(
     text: str, verse: int, hint_min: int
 ) -> Verse:
+    # TODO: handle situation where no commas exist in verse
+
     if hint_min == -1:
         return Verse(verse=verse, hint=text, rest="")
 

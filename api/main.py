@@ -1,4 +1,5 @@
 from api.middleware.cors import CORS
+from app.parse_to_hints import chapter_to_hints, Chapter
 
 import aiohttp
 from dotenv import load_dotenv
@@ -15,10 +16,16 @@ app = FastAPI()
 app.add_middleware(**CORS)
 
 
-@app.get("/passage/{passage}")
-async def passage(passage: str):
+@app.get("/passage/{passage}", response_model=Chapter)
+async def passage(passage: str, hint_min: int = 3):
     response = await request(passage)
-    return {"data": response}
+    chapter = 3
+    data = chapter_to_hints(
+        passage=response["passages"][0],
+        chapter=chapter,
+        hint_min=hint_min
+    )
+    return data
 
 
 @app.get("/")
@@ -45,4 +52,5 @@ async def request(passage: str):
             url, headers=headers, params=params
         ) as resp:
             response = await resp.json()
-            return response["passages"][0]
+            # return response["passages"][0]
+            return response
