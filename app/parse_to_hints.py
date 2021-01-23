@@ -4,50 +4,33 @@ import re
 from typing import List
 
 
-# __all__ = ["PassageResponse", "parse_to_hints"]
-
-
 class Hint(BaseModel):
     verse: int
     hint: str
     rest: str
 
 
-class PassageResponse(BaseModel):
-    data: List[Hint]
+def chapter_to_hints(passage: str, hint_min: int) -> List[Hint]:
+    VERSE = re.compile(r"\[([\d]+)\]")
+    split_passage = [v.strip() for v in VERSE.split(passage) if v.strip()]
+    
+    verse_numbers = [int(n) for n in split_passage[0::2]]
+    verse_text = split_passage[1::2]
+    verses = list(zip(verse_numbers, verse_text))
+
+    return [
+        verse_to_hints(text=t, verse=v, hint_min=hint_min)
+        for v, t in verses
+    ]
 
 
-def parse_to_hints(passage: str) -> PassageResponse:
-    VERSE = re.compile(r"\[([\d+])\]")
-    split_passage = VERSE.split(passage)
-
-    verse = None
-    hint = ""
-    rest = ""
-
-    for p in split_passage:
-        p = p.strip()
-
-        if not p:
-            continue
-
-        if p.isdigit():
-            verse = int(p)
-            continue
-
-        chunks = p.split(", ")
-        for c in chunks:
-            pass
-
-
-def chunks_to_hint(
-    chunks: List[str], verse: int, hint_min: int
+def verse_to_hints(
+    text: str, verse: int, hint_min: int
 ) -> Hint:
     if hint_min == -1:
-        return Hint(
-            verse=verse, hint=", ".join(chunks), rest=""
-        )
+        return Hint(verse=verse, hint=text, rest="")
 
+    chunks = text.split(", ")
     hint = ""
     rest = ""
 
