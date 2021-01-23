@@ -4,13 +4,18 @@ import re
 from typing import List
 
 
-class Hint(BaseModel):
+class Verse(BaseModel):
     verse: int
     hint: str
     rest: str
 
 
-def chapter_to_hints(passage: str, hint_min: int) -> List[Hint]:
+class Chapter(BaseModel):
+    chapter: int
+    verses: List[Verse]
+
+
+def chapter_to_hints(passage: str, chapter: int, hint_min: int) -> Chapter:
     VERSE = re.compile(r"\[([\d]+)\]")
     split_passage = [v.strip() for v in VERSE.split(passage) if v.strip()]
     
@@ -18,17 +23,19 @@ def chapter_to_hints(passage: str, hint_min: int) -> List[Hint]:
     verse_text = split_passage[1::2]
     verses = list(zip(verse_numbers, verse_text))
 
-    return [
+    verse_objs = [
         verse_to_hints(text=t, verse=v, hint_min=hint_min)
         for v, t in verses
     ]
 
+    return Chapter(chapter=chapter, verses=verse_objs)
+
 
 def verse_to_hints(
     text: str, verse: int, hint_min: int
-) -> Hint:
+) -> Verse:
     if hint_min == -1:
-        return Hint(verse=verse, hint=text, rest="")
+        return Verse(verse=verse, hint=text, rest="")
 
     chunks = text.split(", ")
     hint = ""
@@ -46,4 +53,4 @@ def verse_to_hints(
 
         hint = hint + ", " + c
 
-    return Hint(verse=verse, hint=hint, rest=rest)
+    return Verse(verse=verse, hint=hint, rest=rest)
