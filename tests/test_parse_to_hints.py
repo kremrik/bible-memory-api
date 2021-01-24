@@ -15,12 +15,13 @@ class test_parse_to_hints(unittest.TestCase):
         gold = [
             Verse(**{
                 "verse": 12,
-                "hint": "Put on then",
+                "hint": "Put on then,",
                 "rest": "as God's chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,",
             }),
         ]
         gold = Chapter(chapter=chapter, verses=gold)
         output = chapter_to_hints(passage, chapter=chapter, hint_min=hint_min)
+        print(output)
         self.assertEqual(gold, output)
 
 
@@ -29,12 +30,11 @@ class test_chunks_to_hint(unittest.TestCase):
         text = "Put on then, as God's chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,"
         verse = 12
         hint_min = -1
-        gold = {
+        gold = Verse(**{
             "verse": 12,
             "hint": "Put on then, as God's chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,",
             "rest": "",
-        }
-        gold = Verse(**gold)
+        })
         output = verse_to_hints(
             text=text, verse=verse, hint_min=hint_min
         )
@@ -44,12 +44,11 @@ class test_chunks_to_hint(unittest.TestCase):
         text = "Put on then, as God's chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,"
         verse = 12
         hint_min = 3
-        gold = {
+        gold = Verse(**{
             "verse": 12,
-            "hint": "Put on then",
+            "hint": "Put on then,",
             "rest": "as God's chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,",
-        }
-        gold = Verse(**gold)
+        })
         output = verse_to_hints(
             text=text, verse=verse, hint_min=hint_min
         )
@@ -59,12 +58,25 @@ class test_chunks_to_hint(unittest.TestCase):
         text = "Put on then, as God's chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,"
         verse = 12
         hint_min = 4
-        gold = {
+        gold = Verse(**{
             "verse": 12,
-            "hint": "Put on then, as God's chosen ones",
+            "hint": "Put on then, as God's chosen ones,",
             "rest": "holy and beloved, compassionate hearts, kindness, humility, meekness, and patience,",
-        }
-        gold = Verse(**gold)
+        })
+        output = verse_to_hints(
+            text=text, verse=verse, hint_min=hint_min
+        )
+        self.assertEqual(gold, output)
+
+    def test_no_commas(self):
+        text = "On account of these the wrath of God is coming."
+        verse = 6
+        hint_min = 4
+        gold = Verse(**{
+            "verse": 6,
+            "hint": "On account of these",
+            "rest": "the wrath of God is coming.",
+        })
         output = verse_to_hints(
             text=text, verse=verse, hint_min=hint_min
         )

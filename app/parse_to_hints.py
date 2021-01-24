@@ -34,25 +34,30 @@ def chapter_to_hints(passage: str, chapter: int, hint_min: int) -> Chapter:
 def verse_to_hints(
     text: str, verse: int, hint_min: int
 ) -> Verse:
-    # TODO: handle situation where no commas exist in verse
-
-    if hint_min == -1:
-        return Verse(verse=verse, hint=text, rest="")
-
     chunks = text.split(", ")
     hint = ""
     rest = ""
 
-    for idx, c in enumerate(chunks):
-        if not hint:
-            hint = c
-            continue
+    if hint_min == -1:
+        hint = text
 
-        hint_size = hint.split()
-        if len(hint_size) >= hint_min:
-            rest = ", ".join(chunks[idx:])
-            break
+    elif len(chunks) == 1:
+        chunks = text.split(" ")
+        hint = " ".join(chunks[:hint_min])
+        rest = " ".join(chunks[hint_min:])
 
-        hint = hint + ", " + c
+    else:
+        for idx, c in enumerate(chunks):
+            if not hint:
+                hint = c
+                continue
+
+            hint_size = hint.split()
+            if len(hint_size) >= hint_min:
+                rest = ", ".join(chunks[idx:])
+                break
+
+            hint = hint + ", " + c
+        hint = hint + ","
 
     return Verse(verse=verse, hint=hint, rest=rest)

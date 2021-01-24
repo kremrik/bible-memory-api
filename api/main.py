@@ -52,5 +52,4 @@ async def request(passage: str):
             url, headers=headers, params=params
         ) as resp:
             response = await resp.json()
-            # return response["passages"][0]
             return response
