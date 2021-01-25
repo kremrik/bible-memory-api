@@ -1,1 +1,6 @@
-
+aiohttp==3.7.3
+fastapi==0.63.0
+passlib==1.7.4
+python-jose==3.2.0
+python-multipart==.0.0.5
+uvicorn==0.13.3

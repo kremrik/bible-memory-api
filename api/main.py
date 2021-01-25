@@ -1,3 +1,4 @@
+from api.auth import router
 from api.middleware.cors import CORS
 from app.parse_to_hints import chapter_to_hints, Chapter
 
@@ -13,6 +14,7 @@ API_KEY = environ.get("API_KEY")
 
 
 app = FastAPI()
+app.include_router(router)
 app.add_middleware(**CORS)
 
 
