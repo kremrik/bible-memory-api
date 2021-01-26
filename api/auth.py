@@ -19,10 +19,8 @@ from datetime import datetime, timedelta
 from os import environ
 from typing import Optional
 
-load_dotenv()
 
-# to get a string like this run:
-# openssl rand -hex 32
+load_dotenv()
 SECRET_KEY = environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -161,12 +159,3 @@ async def read_users_me(
     current_user: User = Depends(get_current_active_user),
 ):
     return current_user
-
-
-# @router.get("/users/me/items/")
-# async def read_own_items(
-#     current_user: User = Depends(get_current_active_user),
-# ):
-#     return [
-#         {"item_id": "Foo", "owner": current_user.username}
-#     ]
