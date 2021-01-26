@@ -23,7 +23,7 @@ async def passage(
     passage: str,
     initial_size: int = 3,
     hint_size: int = 3,
-    token: str = Depends(validate_token),
+    user: str = Depends(validate_token),
 ):
     response = await request(passage)
     chapter = 3
