@@ -19,13 +19,14 @@ app.add_middleware(**CORS)
 
 
 @app.get("/passage/{passage}", response_model=Chapter)
-async def passage(passage: str, hint_min: int = 3):
+async def passage(passage: str, initial_size: int = 3, hint_size: int = 3):
     response = await request(passage)
     chapter = 3
     data = chapter_to_hints(
         passage=response["passages"][0],
         chapter=chapter,
-        hint_min=hint_min
+        initial_hint_size=initial_size,
+        remainder_size=hint_size
     )
     return data
 
