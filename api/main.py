@@ -1,10 +1,10 @@
-from api.auth import router
+from api.auth import router, validate_token
 from api.middleware.cors import CORS
 from app.parse_to_hints import chapter_to_hints, Chapter
 
 import aiohttp
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from os import environ
 
@@ -19,14 +19,19 @@ app.add_middleware(**CORS)
 
 
 @app.get("/passage/{passage}", response_model=Chapter)
-async def passage(passage: str, initial_size: int = 3, hint_size: int = 3):
+async def passage(
+    passage: str,
+    initial_size: int = 3,
+    hint_size: int = 3,
+    token: str = Depends(validate_token),
+):
     response = await request(passage)
     chapter = 3
     data = chapter_to_hints(
         passage=response["passages"][0],
         chapter=chapter,
         initial_hint_size=initial_size,
-        remainder_size=hint_size
+        remainder_size=hint_size,
     )
     return data
 
