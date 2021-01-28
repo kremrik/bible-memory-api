@@ -8,7 +8,7 @@ import unittest
 
 
 class test_get_passage(unittest.TestCase):
-    # TODO: clean up nasty test...
+    # TODO: clean up nasty test
     def test(self):
         passage = "  [1] If then you have been raised with Christ, seek the things that are above, where Christ is, seated at the right hand of God. [2] Set your minds on things that are above, not on things that are on earth.\n\n"
         book = "Colossians"
