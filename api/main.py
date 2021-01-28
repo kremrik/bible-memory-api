@@ -21,7 +21,7 @@ app.add_middleware(**CORS)
 async def passage(passage: str):
     response = await request(passage)
 
-    query = parse_query(passage)
+    query = parse_query(response["query"])
     book = query.book
     chapter = query.chapter
 
