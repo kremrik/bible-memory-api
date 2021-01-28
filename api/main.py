@@ -1,5 +1,6 @@
 from api.middleware.cors import CORS
-from app.parse_to_hints import chapter_to_hints, Chapter
+from api.parse import get_passage, Book
+from api.query_regex import parse_query
 
 import aiohttp
 from dotenv import load_dotenv
@@ -16,17 +17,26 @@ app = FastAPI()
 app.add_middleware(**CORS)
 
 
-@app.get("/passage/{passage}", response_model=Chapter)
-async def passage(passage: str, initial_size: int = 3, hint_size: int = 3):
+@app.get("/passage/{passage}", response_model=Book)
+async def passage(passage: str):
     response = await request(passage)
-    chapter = 3
-    data = chapter_to_hints(
+
+    query = parse_query(passage)
+    book = query.book
+    chapter = query.chapter
+
+    data = get_passage(
         passage=response["passages"][0],
+        book=book,
         chapter=chapter,
-        initial_hint_size=initial_size,
-        remainder_size=hint_size
     )
     return data
+
+
+@app.get("/raw-passage/{passage}")
+async def passage(passage: str):
+    response = await request(passage)
+    return response
 
 
 @app.get("/")
