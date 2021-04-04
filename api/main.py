@@ -1,10 +1,10 @@
+from api.auth import router as auth, validate_token
 from api.middleware.cors import CORS
-from api.parse import get_passage, Book
-from api.query_regex import parse_query
+from app.passage import get_passage, BibleResponse
 
 import aiohttp
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from os import environ
 
@@ -14,29 +14,20 @@ API_KEY = environ.get("API_KEY")
 
 
 app = FastAPI()
-app.add_middleware(**CORS)
+app.include_router(auth)
+app.add_middleware(**CORS)  # type: ignore
 
 
-@app.get("/passage/{passage}", response_model=Book)
-async def passage(passage: str):
+@app.get(
+    "/passage/{passage}", response_model=BibleResponse
+)
+async def passage(
+    passage: str,
+    user: str = Depends(validate_token),
+):
     response = await request(passage)
-
-    query = parse_query(response["query"])
-    book = query.book
-    chapter = query.chapter
-
-    data = get_passage(
-        passage=response["passages"][0],
-        book=book,
-        chapter=chapter,
-    )
+    data = get_passage(response)
     return data
-
-
-@app.get("/raw-passage/{passage}")
-async def passage(passage: str):
-    response = await request(passage)
-    return response
 
 
 @app.get("/")
