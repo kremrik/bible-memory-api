@@ -24,9 +24,10 @@ class UserInDB(User):
     hashed_password: str
 
 
-def get_user(username: str) -> UserInDB:
+def get_user(username: Optional[str]) -> Optional[UserInDB]:
     if username == USER:
         return UserInDB(
             username=username,
             hashed_password=PW_HASH
         )
+    return None

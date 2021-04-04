@@ -1,6 +1,6 @@
-from api.auth import router, validate_token
+from api.auth import router as auth, validate_token
 from api.middleware.cors import CORS
-from app.parse_to_hints import chapter_to_hints, Chapter
+from app.passage import get_passage, BibleResponse
 
 import aiohttp
 from dotenv import load_dotenv
@@ -14,25 +14,19 @@ API_KEY = environ.get("API_KEY")
 
 
 app = FastAPI()
-app.include_router(router)
-app.add_middleware(**CORS)
+app.include_router(auth)
+app.add_middleware(**CORS)  # type: ignore
 
 
-@app.get("/passage/{passage}", response_model=Chapter)
+@app.get(
+    "/passage/{passage}", response_model=BibleResponse
+)
 async def passage(
     passage: str,
-    initial_size: int = 3,
-    hint_size: int = 3,
     user: str = Depends(validate_token),
 ):
     response = await request(passage)
-    chapter = 3
-    data = chapter_to_hints(
-        passage=response["passages"][0],
-        chapter=chapter,
-        initial_hint_size=initial_size,
-        remainder_size=hint_size,
-    )
+    data = get_passage(response)
     return data
 
 

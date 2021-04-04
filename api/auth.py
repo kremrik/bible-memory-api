@@ -11,8 +11,8 @@ from fastapi.security import (
     OAuth2PasswordBearer,
     OAuth2PasswordRequestForm,
 )
-from jose import JWTError, jwt
-from passlib.context import CryptContext
+from jose import JWTError, jwt  # type: ignore
+from passlib.context import CryptContext  # type: ignore
 from pydantic import BaseModel
 
 from datetime import datetime, timedelta
