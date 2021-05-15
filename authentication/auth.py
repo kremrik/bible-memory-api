@@ -1,6 +1,7 @@
 from api.config import cfg
 from db.main import get_user
-from schemas.auth import TokenData, User
+from schemas.auth import TokenData
+from schemas.users import User
 
 from fastapi import (
     Depends,

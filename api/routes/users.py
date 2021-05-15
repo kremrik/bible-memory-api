@@ -1,5 +1,5 @@
 from api.routes.dependencies import active_user
-from schemas.auth import User
+from schemas.users import User
 
 from fastapi import Depends, APIRouter
 
