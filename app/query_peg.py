@@ -19,13 +19,9 @@ __all__ = ["get_book_and_chapter", "BookAndChapter"]
 book_num = Char(nums)
 book_name = Combine(
     Word(alphas)
-    + Optional(  # noqa W503
-        Combine(Char(" ") + Word(alphas))
-    )
+    + Optional(Combine(Char(" ") + Word(alphas)))  # noqa W503
 )
-book = Combine(
-    Optional(book_num) + Optional(Char(" ")) + book_name
-)
+book = Combine(Optional(book_num) + Optional(Char(" ")) + book_name)
 chapter = Word(nums)
 passage = book("book") + Optional(chapter)("chapter")
 

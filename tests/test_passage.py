@@ -46,7 +46,7 @@ class test_get_passage(unittest.TestCase):
                 {
                 "book": "Colossians",
                 "chapter": {
-                    "chapter_num": 1,
+                    "chapterNum": 1,
                     "verses": [
                     {
                         "verse": 1,

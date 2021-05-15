@@ -1,6 +1,6 @@
 SHELL := bash
 MODULE := $(shell cat .package-name)
-LINE_LENGTH := 59
+LINE_LENGTH := 69
 NO_COLOR := \e[39m
 BLUE := \e[34m
 GREEN := \e[32m

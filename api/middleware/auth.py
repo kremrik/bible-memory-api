@@ -1,62 +1,40 @@
 from db.main import get_user
+from schemas.auth import TokenData, User
 
 from dotenv import load_dotenv
 from fastapi import (
     Depends,
-    APIRouter,
     HTTPException,
     status,
 )
-from fastapi.security import (
-    OAuth2PasswordBearer,
-    OAuth2PasswordRequestForm,
-)
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt  # type: ignore
 from passlib.context import CryptContext  # type: ignore
-from pydantic import BaseModel
 
 from datetime import datetime, timedelta
 from os import environ
 from typing import Optional
 
 
+__all__ = [
+    "authenticate_user",
+    "create_access_token",
+    "get_current_active_user",
+]
+
+
 load_dotenv()
+
 SECRET_KEY = environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-
-router = APIRouter()
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: Optional[str] = None
-
-
-# TODO: dedup from db module
-class User(BaseModel):
-    username: str
-    email: Optional[str] = None
-    full_name: Optional[str] = None
-    disabled: Optional[bool] = None
-
-
-pwd_context = CryptContext(
-    schemes=["bcrypt"], deprecated="auto"
-)
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(
-        plain_password, hashed_password
-    )
+    return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password):
@@ -118,44 +96,5 @@ async def get_current_active_user(
     current_user: User = Depends(validate_token),
 ):
     if current_user.disabled:
-        raise HTTPException(
-            status_code=400, detail="Inactive user"
-        )
-    return current_user
-
-
-@router.post("/token", response_model=Token)
-async def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-):
-    user = authenticate_user(
-        form_data.username, form_data.password
-    )
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    access_token_expires = timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-
-    access_token = create_access_token(
-        data={"sub": user.username},
-        expires_delta=access_token_expires,
-    )
-
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-    }
-
-
-@router.get("/users/me/", response_model=User)
-async def read_users_me(
-    current_user: User = Depends(get_current_active_user),
-):
+        raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
