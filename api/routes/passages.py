@@ -1,4 +1,4 @@
-from api.middleware.auth import validate_token
+from api.routes.dependencies import validate_user
 from api.utils.request import request
 from app.passage import get_passage
 from schemas.passages import BibleResponse
@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/passage/{passage}", response_model=BibleResponse)
 async def passage(
     passage: str,
-    user: str = Depends(validate_token),
+    user=Depends(validate_user),
 ):
     response = await request(passage)
     data = get_passage(response)
