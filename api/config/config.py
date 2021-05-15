@@ -1,5 +1,7 @@
 from pydantic import BaseSettings, BaseModel, Field, SecretStr
 
+from typing import List
+
 
 __all__ = ["Config"]
 
@@ -30,7 +32,9 @@ class DB(BaseDotenvSettings):
 
 
 class Env(BaseDotenvSettings):
-    environment: str = Field(env="ENVIRONMENT", default="local")
+    env: str = Field(env="ENVIRONMENT", default="local")
+    # TODO: source cors_origins from config file
+    cors_origins: List[str] = ["http://localhost:8081"]
 
 
 class Config(BaseModel):
