@@ -1,11 +1,10 @@
-from api.middleware.auth import (
+from api.config import cfg
+from authentication.auth import (
     authenticate_user,
     create_access_token,
-    get_current_active_user,
 )
-from schemas.auth import Token, User
+from schemas.auth import Token
 
-from dotenv import load_dotenv
 from fastapi import (
     Depends,
     APIRouter,
@@ -15,16 +14,9 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 
 from datetime import timedelta
-from os import environ
 
 
 __all__ = ["router"]
-
-
-load_dotenv()
-SECRET_KEY = environ["SECRET_KEY"]
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 router = APIRouter()
@@ -44,7 +36,7 @@ async def login_for_access_token(
         )
 
     access_token_expires = timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=cfg.auth.access_token_expire_minutes
     )
 
     access_token = create_access_token(
@@ -56,10 +48,3 @@ async def login_for_access_token(
         "access_token": access_token,
         "token_type": "bearer",
     }
-
-
-@router.get("/users/me/", response_model=User)
-async def read_users_me(
-    current_user: User = Depends(get_current_active_user),
-):
-    return current_user

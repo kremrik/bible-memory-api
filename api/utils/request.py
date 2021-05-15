@@ -1,23 +1,20 @@
-import aiohttp
-from dotenv import load_dotenv
+from api.config import cfg
 
-from os import environ
+import aiohttp
 
 
 __all__ = ["request"]
 
 
-load_dotenv()
-API_KEY = environ.get("API_KEY")
+url = "https://api.esv.org/v3/passage/text/"
+api_key = cfg.esv_api.api_key.get_secret_value()
 
 
 async def request(passage: str):
-    url = "https://api.esv.org/v3/passage/text/"
-
     # TODO: move authorization to dependencies?
     headers = {
         "accept": "application/json",
-        "Authorization": f"Token {API_KEY}",
+        "Authorization": f"Token {api_key}",
     }
 
     params = {

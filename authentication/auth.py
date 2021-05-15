@@ -1,7 +1,7 @@
+from api.config import cfg
 from db.main import get_user
 from schemas.auth import TokenData, User
 
-from dotenv import load_dotenv
 from fastapi import (
     Depends,
     HTTPException,
@@ -12,18 +12,11 @@ from jose import JWTError, jwt  # type: ignore
 from passlib.context import CryptContext  # type: ignore
 
 from datetime import datetime, timedelta
-from os import environ
 from typing import Optional
 
 
 __all__ = ["authenticate_user", "create_access_token", "get_current_active_user"]
 
-
-load_dotenv()
-
-SECRET_KEY = environ["SECRET_KEY"]
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(
@@ -60,7 +53,9 @@ def create_access_token(
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
-        to_encode, SECRET_KEY, algorithm=ALGORITHM
+        to_encode,
+        cfg.auth.secret_key.get_secret_value(), 
+        algorithm=cfg.auth.algorithm
     )
     return encoded_jwt
 
@@ -76,7 +71,9 @@ async def validate_token(
 
     try:
         payload = jwt.decode(
-            token, SECRET_KEY, algorithms=[ALGORITHM]
+            token,
+            cfg.auth.secret_key.get_secret_value(), 
+            algorithms=[cfg.auth.algorithm]
         )
         username: str = payload.get("sub")
         if username is None:
