@@ -78,6 +78,12 @@ success :
 
 #----------------------------------------------------------
 
+.PHONY: start-app
+start-app:
+	@uvicorn api.config.wsgi:api --reload
+
+#----------------------------------------------------------
+
 .PHONY: cov
 cov:
 	@python -m pytest --cov=$(MODULE) --cov-config=.coveragerc --cov-report html
