@@ -41,3 +41,4 @@ class Config(BaseModel):
     auth: Auth = Auth()
     env: Env = Env()
     esv_api: EsvApi = EsvApi()
+    db: DB = DB()

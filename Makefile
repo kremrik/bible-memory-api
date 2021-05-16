@@ -80,7 +80,7 @@ success :
 
 .PHONY: start-app
 start-app:
-	@uvicorn api.config.wsgi:api --reload
+	@uvicorn api.config.asgi:api --reload
 
 #----------------------------------------------------------
 

@@ -3,6 +3,7 @@ from api.routes.base import router as base  # type: ignore
 from api.routes.passages import router as passages  # type: ignore
 from api.routes.users import router as users  # type: ignore
 from api.middleware.cors import CORS
+from db.engine import engine
 
 from fastapi import FastAPI
 
@@ -12,6 +13,15 @@ __all__ = ["start"]
 
 def start():
     app = FastAPI()
+
+    @app.on_event("startup")
+    async def create_db_conn():
+        # TODO: log engine configs
+        await engine.start_connection_pool()
+
+    @app.on_event("shutdown")
+    async def destroy_db_conn():
+        await engine.close_connection_pool()
 
     app.include_router(base)
     app.include_router(passages)

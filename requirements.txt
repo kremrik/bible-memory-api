@@ -7,3 +7,4 @@ python-dotenv==0.16.0
 python-jose==3.2.0
 python-multipart==.0.0.5
 uvicorn==0.13.3
+piccolo==0.19.1
