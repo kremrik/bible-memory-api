@@ -3,7 +3,7 @@ from api.routes.base import router as base  # type: ignore
 from api.routes.passages import router as passages  # type: ignore
 from api.routes.users import router as users  # type: ignore
 from api.middleware.cors import CORS
-from db.engine import engine
+from api.db.engine import engine
 
 from fastapi import FastAPI
 

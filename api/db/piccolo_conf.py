@@ -16,4 +16,4 @@ config = {
 
 
 DB = PostgresEngine(config)
-APP_REGISTRY = AppRegistry(apps=["db.piccolo_app"])
+APP_REGISTRY = AppRegistry(apps=["api.db.piccolo_app"])

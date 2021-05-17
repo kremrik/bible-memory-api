@@ -43,14 +43,14 @@ black-format :
 	@echo
 	@echo -e '$(BLUE)black-format'
 	@echo -e 		'------------$(NO_COLOR)'
-	@black api app authentication db schemas -l $(LINE_LENGTH)
+	@black api app authentication schemas -l $(LINE_LENGTH)
 
 .PHONY: flake8-lint
 flake8-lint :
 	@echo
 	@echo -e '$(BLUE)flake8-lint'
 	@echo -e 		'-----------$(NO_COLOR)'
-	@flake8 api app authentication db schemas \
+	@flake8 api app authentication schemas \
 		--max-line-length $(LINE_LENGTH) \
 		--ignore=F401,E731,F403 \
 		--count \

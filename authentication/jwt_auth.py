@@ -1,5 +1,4 @@
 from api.config import cfg
-from db.main import get_user
 from schemas.auth import TokenData
 
 from fastapi import (

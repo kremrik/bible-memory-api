@@ -4,7 +4,7 @@ from authentication.basic_auth import (
     create_access_token,
 )
 from schemas.auth import Token
-from db.models.users import Users
+from api.db.models.users import Users
 
 from fastapi import (
     Depends,

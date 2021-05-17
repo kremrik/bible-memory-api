@@ -1,5 +1,5 @@
 from piccolo.conf.apps import AppConfig
-from db.models.users import Users
+from api.db.models.users import Users
 
 from os.path import abspath, dirname, join
 

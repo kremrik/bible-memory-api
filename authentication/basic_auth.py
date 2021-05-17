@@ -1,5 +1,4 @@
 from api.config import cfg
-from db.main import get_user
 
 from jose import jwt  # type: ignore
 from passlib.context import CryptContext  # type: ignore

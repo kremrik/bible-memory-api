@@ -1,5 +1,5 @@
 from api.routes.dependencies import validate_user
-from db.models.users import Users
+from api.db.models.users import Users
 from schemas.users import User
 
 from fastapi import Depends, APIRouter
