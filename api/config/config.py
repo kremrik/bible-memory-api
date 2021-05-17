@@ -1,9 +1,15 @@
+from api.config.environment import EnvCfg, environments
+
+from dotenv import load_dotenv
 from pydantic import BaseSettings, BaseModel, Field, SecretStr
 
-from typing import List
+from os import environ
 
 
 __all__ = ["Config"]
+
+
+load_dotenv()  # TODO: find a way to do without this
 
 
 class BaseDotenvSettings(BaseSettings):
@@ -33,8 +39,9 @@ class DB(BaseDotenvSettings):
 
 class Env(BaseDotenvSettings):
     env: str = Field(env="ENVIRONMENT", default="local")
-    # TODO: source cors_origins from config file
-    cors_origins: List[str] = ["http://localhost:8081"]
+    config: EnvCfg = environments[
+        environ.get("ENVIRONMENT", "local")
+    ]
 
 
 class Config(BaseModel):

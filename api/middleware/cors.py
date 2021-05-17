@@ -8,7 +8,7 @@ __all__ = ["CORS"]
 
 CORS = {
     "middleware_class": CORSMiddleware,
-    "allow_origins": cfg.env.cors_origins,
+    "allow_origins": cfg.env.config.cors_origins,
     "allow_credentials": True,
     "allow_methods": ["*"],
     "allow_headers": ["*"],
