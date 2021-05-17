@@ -1,5 +1,4 @@
 from api.config import cfg
-from schemas.auth import TokenData
 
 from fastapi import (
     Depends,
