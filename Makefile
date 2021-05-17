@@ -36,7 +36,7 @@ type-check :
 	@echo
 	@echo -e '$(BLUE)type-check'
 	@echo -e 		'----------$(NO_COLOR)'
-	@mypy ./*/*.py
+	@mypy .
 
 .PHONY: black-format
 black-format :
