@@ -12,9 +12,7 @@ from typing import Optional
 __all__ = ["authenticate_user", "create_access_token"]
 
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"], deprecated="auto"
-)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def authenticate_user(password: str, hashed_password: str) -> bool:
@@ -34,14 +32,11 @@ def create_access_token(
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
-        cfg.auth.secret_key.get_secret_value(), 
-        algorithm=cfg.auth.algorithm
+        cfg.auth.secret_key.get_secret_value(),
+        algorithm=cfg.auth.algorithm,
     )
     return encoded_jwt
 
 
-
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(
-        plain_password, hashed_password
-    )
+    return pwd_context.verify(plain_password, hashed_password)

@@ -11,7 +11,7 @@ config = {
     "host": cfg.db.host,
     "database": cfg.db.database,
     "user": cfg.db.username,
-    "password": cfg.db.password.get_secret_value()
+    "password": cfg.db.password.get_secret_value(),
 }
 
 

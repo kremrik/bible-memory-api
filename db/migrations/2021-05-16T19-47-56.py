@@ -8,7 +8,9 @@ VERSION = "0.19.1"
 
 
 async def forwards():
-    manager = MigrationManager(migration_id=ID, app_name="bible_memory")
+    manager = MigrationManager(
+        migration_id=ID, app_name="bible_memory"
+    )
 
     manager.add_column(
         table_class_name="Users",

@@ -10,5 +10,5 @@ PWD = dirname(abspath(__file__))
 APP_CONFIG = AppConfig(
     app_name="bible_memory",
     migrations_folder_path=join(PWD, "migrations"),
-    table_classes=[Users]
+    table_classes=[Users],
 )

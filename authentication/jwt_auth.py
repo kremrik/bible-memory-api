@@ -29,14 +29,14 @@ async def validate_token(
     try:
         payload = jwt.decode(
             token,
-            cfg.auth.secret_key.get_secret_value(), 
-            algorithms=[cfg.auth.algorithm]
+            cfg.auth.secret_key.get_secret_value(),
+            algorithms=[cfg.auth.algorithm],
         )
         username: str = payload.get("sub")
 
         if username is None:
             raise credentials_exception
-        
+
         return username
 
     except JWTError:
