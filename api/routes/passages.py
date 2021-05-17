@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/passage/{passage}", response_model=BibleResponse)
 async def passage(
     passage: str,
-    user=Depends(validate_user),
+    username=Depends(validate_user),
 ):
     response = await request(passage)
     data = get_passage(response)

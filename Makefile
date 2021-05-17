@@ -82,6 +82,14 @@ success :
 start-app:
 	@uvicorn api.config.asgi:api --reload
 
+.PHONY: create-migration
+create-migration:
+	@piccolo migrations new bible_memory --auto
+
+.PHONY: run-migrations
+run-migrations:
+	@piccolo migrations forwards bible_memory
+
 #----------------------------------------------------------
 
 .PHONY: cov

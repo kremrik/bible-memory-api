@@ -13,6 +13,8 @@ PW_HASH = environ["PW_HASH"]
 USER = environ["ALLOWED_USER"]
 
 
+# TODO: source from schemas
+# TODO: add admin field
 class User(BaseModel):
     username: str
     email: Optional[str] = None

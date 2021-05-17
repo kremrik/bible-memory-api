@@ -1,9 +1,10 @@
 from api.config import cfg
-from authentication.auth import (
+from authentication.basic_auth import (
     authenticate_user,
     create_access_token,
 )
 from schemas.auth import Token
+from db.models.users import Users
 
 from fastapi import (
     Depends,
@@ -26,9 +27,18 @@ router = APIRouter()
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
-    user = authenticate_user(form_data.username, form_data.password)
+    username = form_data.username
+    password = form_data.password
 
-    if not user:
+    users = (
+        await Users.select().where(Users.username == username).run()
+    )
+    user = users[0]
+    hashed_password = user.get("password_hash")
+
+    valid_user = authenticate_user(password, hashed_password)
+
+    if not valid_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -40,7 +50,7 @@ async def login_for_access_token(
     )
 
     access_token = create_access_token(
-        data={"sub": user.username},
+        data={"sub": username},
         expires_delta=access_token_expires,
     )
 

@@ -1,9 +1,10 @@
 from piccolo.table import Table
-from piccolo.columns import Boolean, Varchar
+from piccolo.columns import Boolean, Text, Varchar
 
 
 class Users(Table):
-    username = Varchar(length=100)
-    email = Varchar(length=100)
-    full_name = Varchar(length=100)
+    username = Varchar(length=100, unique=True)
+    password_hash = Text()
+    email = Varchar(length=100, unique=True)
+    full_name = Varchar(length=100, unique=True)
     disabled = Boolean(default=False)
