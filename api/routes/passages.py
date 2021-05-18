@@ -14,12 +14,12 @@ tags = ["passages"]
 
 
 @router.get(
-    "/passages/{passage}", response_model=BibleResponse, tags=tags
+    "/passages/{passage}",
+    response_model=BibleResponse,
+    dependencies=[Depends(validate_user)],
+    tags=tags,
 )
-async def passages(
-    passage: str,
-    user=Depends(validate_user),
-):
+async def passages(passage: str):
     response = await request(passage)
     data = get_passage(response)
     return data

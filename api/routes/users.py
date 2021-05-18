@@ -31,9 +31,13 @@ async def read_users_me(user: JWT = Depends(validate_user)):
     return UserResponse(**users[0])
 
 
-@router.get("/users", response_model=List[UserResponse], tags=tags)
+@router.get(
+    "/users",
+    response_model=List[UserResponse],
+    tags=tags,
+    dependencies=[Depends(validate_admin_user)],
+)
 async def get_users(
-    user: JWT = Depends(validate_admin_user),
     pagination: dict = Depends(paginate_params),
 ):
     limit = pagination["limit"]
