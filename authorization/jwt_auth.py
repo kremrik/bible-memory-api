@@ -1,4 +1,5 @@
 from api.config import cfg
+from schemas.jwt import JWT
 
 from fastapi import (
     Depends,
@@ -17,7 +18,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def validate_token(
     token: str = Depends(oauth2_scheme),
-) -> str:
+) -> JWT:
+    return _validate_token(token)
+
+
+def _validate_token(token: str) -> JWT:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -30,12 +35,7 @@ async def validate_token(
             cfg.auth.secret_key.get_secret_value(),
             algorithms=[cfg.auth.algorithm],
         )
-        username: str = payload.get("sub")
-
-        if username is None:
-            raise credentials_exception
-
-        return username
+        return JWT(**payload)
 
     except JWTError:
         raise credentials_exception

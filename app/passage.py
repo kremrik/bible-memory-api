@@ -1,5 +1,10 @@
 from app.query_peg import get_book_and_chapter  # type: ignore  # noqa E501
-from schemas.passages import BibleResponse, Chapter, Passage, Verse
+from schemas.response.passages import (
+    BibleResponse,
+    Chapter,
+    Passage,
+    Verse,
+)
 
 import re
 from typing import List

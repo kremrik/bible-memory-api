@@ -1,9 +1,9 @@
 from api.config import cfg
-from authentication.basic_auth import (
+from authorization.basic_auth import (
     authenticate_user,
     create_access_token,
 )
-from schemas.auth import Token
+from schemas.response.auth import Token
 from api.db.models.users import Users
 
 from fastapi import (
@@ -14,6 +14,7 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordRequestForm
 
+from base64 import b64decode
 from datetime import timedelta
 
 
@@ -21,20 +22,22 @@ __all__ = ["router"]
 
 
 router = APIRouter()
+tags = ["auth"]
 
 
-@router.post("/token", response_model=Token)
+@router.post("/token", response_model=Token, tags=tags)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
-    username = form_data.username
-    password = form_data.password
+    username = b64decode(form_data.username.encode()).decode()
+    password = b64decode(form_data.password.encode()).decode()
 
     users = (
         await Users.select().where(Users.username == username).run()
     )
     user = users[0]
     hashed_password = user.get("password_hash")
+    admin = user.get("admin")
 
     valid_user = authenticate_user(password, hashed_password)
 
@@ -50,7 +53,7 @@ async def login_for_access_token(
     )
 
     access_token = create_access_token(
-        data={"sub": username},
+        data={"sub": username, "admin": admin},
         expires_delta=access_token_expires,
     )
 

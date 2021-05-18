@@ -8,3 +8,4 @@ class Users(Table):
     email = Varchar(length=100, unique=True)
     full_name = Varchar(length=100, unique=True)
     disabled = Boolean(default=False)
+    admin = Boolean(default=False)
