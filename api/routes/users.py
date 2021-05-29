@@ -22,15 +22,6 @@ router = APIRouter()
 tags = ["users"]
 
 
-@router.get("/me", response_model=UserResponse, tags=tags)
-async def read_users_me(user: JWT = Depends(validate_user)):
-    username = user.sub
-    users = (
-        await Users.select().where(Users.username == username).run()
-    )
-    return UserResponse(**users[0])
-
-
 @router.get(
     "/users",
     response_model=List[UserResponse],
@@ -63,3 +54,26 @@ async def create_user(user: UserRequest):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(e)
         )
+
+
+@router.get("/me", response_model=UserResponse, tags=tags)
+async def read_users_me(user: JWT = Depends(validate_user)):
+    username = user.sub
+    users = (
+        await Users.select().where(Users.username == username).run()
+    )
+    return UserResponse(**users[0])
+
+
+@router.delete("/me", response_model=UserResponse, tags=tags)
+async def delete_users_me(user: JWT = Depends(validate_user)):
+    username = user.sub
+    await Users.update({Users.disabled: True}).where(
+        Users.username == username
+    ).run()
+
+    users = (
+        await Users.select().where(Users.username == username).run()
+    )
+
+    return UserResponse(**users[0])

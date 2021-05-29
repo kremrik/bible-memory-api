@@ -38,6 +38,7 @@ async def login_for_access_token(
     user = users[0]
     hashed_password = user.get("password_hash")
     admin = user.get("admin")
+    # TODO: check for user active
 
     valid_user = authenticate_user(password, hashed_password)
 
