@@ -37,8 +37,16 @@ async def login_for_access_token(
     )
     user = users[0]
     hashed_password = user.get("password_hash")
+    user_id = str(user.get("user_id"))
     admin = user.get("admin")
-    # TODO: check for user active
+    deactivated = user.get("disabled")
+
+    if deactivated:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User is inactive",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     valid_user = authenticate_user(password, hashed_password)
 
@@ -54,7 +62,7 @@ async def login_for_access_token(
     )
 
     access_token = create_access_token(
-        data={"sub": username, "admin": admin},
+        data={"sub": username, "admin": admin, "user_id": user_id},
         expires_delta=access_token_expires,
     )
 

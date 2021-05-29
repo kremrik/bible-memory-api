@@ -13,6 +13,7 @@ from asyncpg.exceptions import UniqueViolationError  # type: ignore
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from typing import List
+from uuid import UUID
 
 
 __all__ = ["router"]
@@ -36,7 +37,7 @@ async def get_users(
 
     users = (
         await Users.select()
-        .order_by(Users.id)
+        .order_by(Users.user_id)
         .limit(limit)
         .offset(offset)
         .run()
@@ -49,31 +50,51 @@ async def get_users(
 async def create_user(user: UserRequest):
     try:
         await Users.insert(Users(**user.dict())).run()
-        return user
+        created_user = await Users.select().where(
+            Users.username == user.username
+        )
+        return created_user[0]
     except UniqueViolationError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(e)
         )
 
 
+@router.delete(
+    "/users/{user_id}",
+    response_model=str,
+    tags=tags,
+    dependencies=[Depends(validate_admin_user)],
+)
+async def delete_user(user_id: str):
+    user_id_u = UUID(user_id)
+    try:
+        await Users.delete().where(Users.user_id == user_id_u).run()
+        return user_id
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )
+
+
 @router.get("/me", response_model=UserResponse, tags=tags)
 async def read_users_me(user: JWT = Depends(validate_user)):
-    username = user.sub
+    user_id = UUID(user.user_id)
     users = (
-        await Users.select().where(Users.username == username).run()
+        await Users.select().where(Users.user_id == user_id).run()
     )
     return UserResponse(**users[0])
 
 
 @router.delete("/me", response_model=UserResponse, tags=tags)
 async def delete_users_me(user: JWT = Depends(validate_user)):
-    username = user.sub
+    user_id = UUID(user.user_id)
     await Users.update({Users.disabled: True}).where(
-        Users.username == username
+        Users.user_id == user_id
     ).run()
 
     users = (
-        await Users.select().where(Users.username == username).run()
+        await Users.select().where(Users.user_id == user_id).run()
     )
 
     return UserResponse(**users[0])
