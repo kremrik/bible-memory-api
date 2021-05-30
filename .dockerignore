@@ -1,0 +1,5 @@
+.githooks
+.mypy_cache
+.pytest_cache
+infrastructure
+tests
