@@ -1,10 +1,8 @@
-from api.logger import LOG_CFG_FILE_PATH
 from api.db.models.users import Users
 from schemas.jwt import JWT
 from schemas.response.users import User as UserResponse
 from schemas.request.users import User as UserRequest
 
-from starlette.status import HTTP_409_CONFLICT
 from api.routes.dependencies import (
     paginate_params,
     validate_admin_user,
@@ -14,7 +12,6 @@ from asyncpg.exceptions import UniqueViolationError  # type: ignore
 from fastapi import APIRouter, Depends, HTTPException, status
 
 import logging
-import logging.config
 from typing import List
 from uuid import UUID
 
@@ -22,9 +19,6 @@ from uuid import UUID
 __all__ = ["router"]
 
 
-logging.config.fileConfig(
-    LOG_CFG_FILE_PATH, disable_existing_loggers=False
-)
 LOGGER = logging.getLogger(__name__)
 
 
