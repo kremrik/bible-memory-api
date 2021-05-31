@@ -19,14 +19,13 @@ from uuid import UUID
 __all__ = ["router"]
 
 
-router = APIRouter()
 tags = ["users"]
+router = APIRouter(prefix="/users", tags=tags)
 
 
 @router.get(
-    "/users",
+    "/",
     response_model=List[UserResponse],
-    tags=tags,
     dependencies=[Depends(validate_admin_user)],
 )
 async def get_users(
@@ -46,7 +45,7 @@ async def get_users(
     return users
 
 
-@router.post("/users", response_model=UserResponse, tags=tags)
+@router.post("/", response_model=UserResponse)
 async def create_user(user: UserRequest):
     try:
         await Users.insert(Users(**user.dict())).run()
@@ -61,9 +60,8 @@ async def create_user(user: UserRequest):
 
 
 @router.delete(
-    "/users/{user_id}",
+    "/{user_id}",
     response_model=str,
-    tags=tags,
     dependencies=[Depends(validate_admin_user)],
 )
 async def delete_user(user_id: str):
@@ -77,7 +75,7 @@ async def delete_user(user_id: str):
         )
 
 
-@router.get("/me", response_model=UserResponse, tags=tags)
+@router.get("/me", response_model=UserResponse)
 async def read_users_me(user: JWT = Depends(validate_user)):
     user_id = UUID(user.user_id)
     users = (
@@ -86,7 +84,7 @@ async def read_users_me(user: JWT = Depends(validate_user)):
     return UserResponse(**users[0])
 
 
-@router.delete("/me", response_model=UserResponse, tags=tags)
+@router.delete("/me", response_model=UserResponse)
 async def delete_users_me(user: JWT = Depends(validate_user)):
     user_id = UUID(user.user_id)
     await Users.update({Users.disabled: True}).where(
