@@ -52,7 +52,7 @@ flake8-lint :
 	@echo -e 		'-----------$(NO_COLOR)'
 	@flake8 api app authorization schemas \
 		--max-line-length $(LINE_LENGTH) \
-		--ignore=F401,E731,F403 \
+		--ignore=F401,E731,F403,E501 \
 		--count \
 		|| exit 1
 

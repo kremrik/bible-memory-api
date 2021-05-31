@@ -1,12 +1,23 @@
+from schemas.jwt import JWT
 from api.routes.dependencies import validate_user
 from api.utils.request import request
 from app.passage import get_passage
-from schemas.response.passages import BibleResponse
+from schemas.response.passages import (
+    BibleResponse,
+    AddPassageResponse,
+)
+from api.db.models.passages import Passages
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from asyncpg.exceptions import UniqueViolationError  # type: ignore
+
+import logging
 
 
 __all__ = ["router"]
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 tags = ["passages"]
@@ -22,3 +33,19 @@ async def passages(passage: str):
     response = await request(passage)
     data = get_passage(response)
     return data
+
+
+@router.post("/{passage}", response_model=AddPassageResponse)
+async def add_passage(
+    passage: str, user: JWT = Depends(validate_user)
+):
+    user_id = user.user_id
+    record = {"user_id": user_id, "passage": passage}
+    try:
+        await Passages.insert(Passages(**record)).run()  # type: ignore
+        return record
+    except UniqueViolationError as e:
+        LOGGER.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=str(e)
+        )

@@ -1,6 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
-from typing import List
+from typing import Any, List
+
+
+__all__ = ["BibleResponse", "AddPassageResponse"]
+
+
+UUID = Any
 
 
 class Verse(BaseModel):
@@ -20,3 +26,12 @@ class Passage(BaseModel):
 
 class BibleResponse(BaseModel):
     passages: List[Passage]
+
+
+class AddPassageResponse(BaseModel):
+    user_id: UUID
+    passage: str
+
+    @validator("user_id")
+    def convert_user_id(cls, uid):
+        return str(uid)

@@ -1,7 +1,8 @@
+from enum import unique
 from piccolo.table import Table
-from piccolo.columns import UUID, Varchar
+from piccolo.columns import UUID, Text
 
 
 class Passages(Table):
-    user_id = Varchar(36)
-    passage = UUID()
+    user_id = UUID()
+    passage = Text(unique=True)
