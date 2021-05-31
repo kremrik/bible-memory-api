@@ -5,6 +5,7 @@ from app.passage import get_passage
 from schemas.response.passages import (
     BibleResponse,
     AddPassageResponse,
+    RemovePassageResponse,
 )
 from api.db.models.passages import Passages
 
@@ -62,3 +63,14 @@ async def add_passage(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(e)
         )
+
+
+@router.delete("/{passage}", response_model=RemovePassageResponse)
+async def remove_passage(
+    passage: str, user: JWT = Depends(validate_user)
+):
+    user_id = UUID(user.user_id)
+    await Passages.delete().where(
+        (Passages.user_id == user_id) & (Passages.passage == passage)
+    ).run()
+    return {"passage": passage, "user_id": user_id}

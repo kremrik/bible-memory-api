@@ -3,7 +3,11 @@ from pydantic import BaseModel, validator
 from typing import Any, List
 
 
-__all__ = ["BibleResponse", "AddPassageResponse"]
+__all__ = [
+    "BibleResponse",
+    "AddPassageResponse",
+    "RemovePassageResponse",
+]
 
 
 UUID = Any
@@ -36,3 +40,7 @@ class AddPassageResponse(BaseModel):
     @validator("user_id")
     def convert_user_id(cls, uid):
         return str(uid)
+
+
+class RemovePassageResponse(AddPassageResponse):
+    pass
