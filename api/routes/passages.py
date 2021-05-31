@@ -9,15 +9,14 @@ from fastapi import APIRouter, Depends
 __all__ = ["router"]
 
 
-router = APIRouter()
 tags = ["passages"]
+router = APIRouter(prefix="/passages", tags=tags)
 
 
 @router.get(
-    "/passages/{passage}",
+    "/{passage}",
     response_model=BibleResponse,
     dependencies=[Depends(validate_user)],
-    tags=tags,
 )
 async def passages(passage: str):
     response = await request(passage)
