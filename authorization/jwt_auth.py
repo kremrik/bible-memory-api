@@ -32,7 +32,7 @@ def _validate_token(token: str) -> JWT:
     try:
         payload = jwt.decode(
             token,
-            cfg.auth.secret_key.get_secret_value(),
+            cfg.auth.jwt_secret_key.get_secret_value(),
             algorithms=[cfg.auth.algorithm],
         )
         return JWT(**payload)

@@ -19,8 +19,9 @@ services:
         ports:
             - "127.0.0.1:8000:8000"
         environment:
+            - ENVIRONMENT=local
             - API_KEY=$API_KEY
-            - SECRET_KEY=$SECRET_KEY
+            - JWT_SECRET_KEY=$JWT_SECRET_KEY
             - PICCOLO_CONF=$PICCOLO_CONF
             - POSTGRES_USER=$POSTGRES_USER
             - POSTGRES_PASSWORD=$POSTGRES_PASSWORD

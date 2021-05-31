@@ -23,7 +23,7 @@ class EsvApi(BaseDotenvSettings):
 
 
 class Auth(BaseDotenvSettings):
-    secret_key: SecretStr = Field(env="SECRET_KEY")
+    jwt_secret_key: SecretStr = Field(env="JWT_SECRET_KEY")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
