@@ -1,3 +1,4 @@
+from api.config import cfg
 from api.routes.auth import router as auth
 from api.routes.base import router as base
 from api.routes.passages import router as passages
@@ -7,11 +8,17 @@ from api.db.engine import engine
 
 from fastapi import FastAPI
 
+import logging
+
 
 __all__ = ["start"]
 
 
+logging.getLogger().setLevel(logging.INFO)
+
+
 def start():
+    logging.info(cfg)
     app = FastAPI()
 
     @app.on_event("startup")

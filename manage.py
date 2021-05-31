@@ -1,5 +1,4 @@
 from authorization.basic_auth import hash_plaintext_password
-from api.config import cfg
 from api.db.models.users import Users
 
 import click

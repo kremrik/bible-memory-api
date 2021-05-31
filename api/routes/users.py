@@ -12,6 +12,7 @@ from schemas.request.users import User as UserRequest
 from asyncpg.exceptions import UniqueViolationError  # type: ignore
 from fastapi import APIRouter, Depends, HTTPException, status
 
+import logging
 from typing import List
 from uuid import UUID
 
@@ -54,6 +55,7 @@ async def create_user(user: UserRequest):
         )
         return created_user[0]
     except UniqueViolationError as e:
+        logging.error(e)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(e)
         )
@@ -70,6 +72,7 @@ async def delete_user(user_id: str):
         await Users.delete().where(Users.user_id == user_id_u).run()
         return user_id
     except Exception as e:
+        logging.error(e)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )

@@ -8,4 +8,9 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT uvicorn api.config.asgi:api --host 0.0.0.0 --port 8000 --reload
+ENTRYPOINT uvicorn \
+    api.config.asgi:api \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --log-level info \
+    --reload
