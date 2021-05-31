@@ -21,11 +21,11 @@ from datetime import timedelta
 __all__ = ["router"]
 
 
-router = APIRouter()
 tags = ["auth"]
+router = APIRouter(tags=tags)
 
 
-@router.post("/token", response_model=Token, tags=tags)
+@router.post("/token", response_model=Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):

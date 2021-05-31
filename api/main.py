@@ -1,4 +1,5 @@
 from api.config import cfg
+from api.logger import LOG_CFG_FILE_PATH
 from api.routes.auth import router as auth
 from api.routes.base import router as base
 from api.routes.passages import router as passages
@@ -9,16 +10,20 @@ from api.db.engine import engine
 from fastapi import FastAPI
 
 import logging
+import logging.config
 
 
 __all__ = ["start"]
 
 
-logging.getLogger().setLevel(logging.INFO)
+logging.config.fileConfig(
+    LOG_CFG_FILE_PATH, disable_existing_loggers=False
+)
+LOGGER = logging.getLogger(__name__)
 
 
 def start():
-    logging.info(cfg)
+    LOGGER.info(cfg)
     app = FastAPI()
 
     @app.on_event("startup")
