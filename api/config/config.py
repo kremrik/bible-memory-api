@@ -33,13 +33,13 @@ class DB(BaseDotenvSettings):
     password: SecretStr = Field(env="POSTGRES_PASSWORD")
 
 
-class Env(BaseDotenvSettings):
-    env: str = Field(env="ENVIRONMENT", default="local")
+class Middleware(BaseDotenvSettings):
     cors_regex: str = Field(env="CORS_REGEX")
 
 
-class Config(BaseModel):
+class Config(BaseDotenvSettings):
+    env: str = Field(env="ENVIRONMENT", default="local")
     auth: Auth = Auth()
-    env: Env = Env()
+    middleware: Middleware = Middleware()
     esv_api: EsvApi = EsvApi()
     db: DB = DB()
