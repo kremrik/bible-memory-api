@@ -3,7 +3,9 @@ from api.db.models.users import Users
 
 import click
 
+import shlex
 from pprint import pprint
+from subprocess import Popen
 
 
 HELP_CONTEXT = {"help_option_names": ["-h", "--help"]}
@@ -52,6 +54,20 @@ def make_admin_user(
 @db.command()
 def drop_users():
     Users.delete(force=True).run_sync()
+
+
+@db.command()
+def create_migration():
+    cmd = "piccolo migrations new bible_memory --auto"
+    proc = Popen(shlex.split(cmd))
+    proc.wait()
+
+
+@db.command()
+def run_migrations():
+    cmd = "piccolo migrations forwards bible_memory"
+    proc = Popen(shlex.split(cmd))
+    proc.wait()
 
 
 if __name__ == "__main__":
