@@ -26,10 +26,13 @@ def passages(response: dict) -> List[Passage]:
     passages_ = []
 
     for qry_, psg_ in qrys_and_psgs:
+        canonical = qry_.strip()
         book_, chapter_ = get_book_and_chapter(qry_)
         verses_ = verses(psg_)
         chapter = Chapter(chapterNum=chapter_, verses=verses_)
-        passage = Passage(book=book_, chapter=chapter)
+        passage = Passage(
+            canonical=canonical, book=book_, chapter=chapter
+        )
         passages_.append(passage)
 
     return passages_

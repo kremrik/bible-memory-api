@@ -43,7 +43,7 @@ black-format :
 	@echo
 	@echo -e '$(BLUE)black-format'
 	@echo -e 		'------------$(NO_COLOR)'
-	@black api app authorization schemas -l $(LINE_LENGTH)
+	@black api app authorization schemas tests/unit -l $(LINE_LENGTH)
 
 .PHONY: flake8-lint
 flake8-lint :

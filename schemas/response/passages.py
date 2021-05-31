@@ -20,6 +20,7 @@ class Chapter(BaseModel):
 
 
 class Passage(BaseModel):
+    canonical: str
     book: str
     chapter: Chapter
 
