@@ -4,7 +4,7 @@ from authorization.basic_auth import (
     create_access_token,
 )
 from schemas.response.auth import Token
-from api.db.models.users import Users
+from api.db.operations import select_user_by_username
 
 from fastapi import (
     Depends,
@@ -32,10 +32,7 @@ async def login_for_access_token(
     username = b64decode(form_data.username.encode()).decode()
     password = b64decode(form_data.password.encode()).decode()
 
-    users = (
-        await Users.select().where(Users.username == username).run()
-    )
-    user = users[0]
+    user = await select_user_by_username(username)
     hashed_password = user.get("password_hash")
     user_id = str(user.get("user_id"))
     admin = user.get("admin")

@@ -8,11 +8,11 @@ UUID = Any
 
 class User(BaseModel):
     username: str
-    email: Optional[str]
-    full_name: Optional[str]
+    email: str
+    full_name: str
     disabled: Optional[bool] = False
     admin: Optional[bool] = False
-    user_id: UUID
+    user_id: Optional[UUID] = None
 
     @validator("user_id")
     def convert_user_id(cls, uid):

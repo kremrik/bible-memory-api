@@ -1,4 +1,10 @@
-from api.db.models.users import Users
+from api.db.operations import (
+    select_users,
+    insert_user,
+    drop_user,
+    select_user,
+    deactivate_user,
+)
 from schemas.jwt import JWT
 from schemas.response.users import User as UserResponse
 from schemas.request.users import User as UserRequest
@@ -13,7 +19,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 import logging
 from typing import List
-from uuid import UUID
 
 
 __all__ = ["router"]
@@ -37,13 +42,7 @@ async def get_users(
     limit = pagination["limit"]
     offset = pagination["offset"]
 
-    users = (
-        await Users.select()
-        .order_by(Users.user_id)
-        .limit(limit)
-        .offset(offset)
-        .run()
-    )
+    users = await select_users(limit, offset)
 
     return users
 
@@ -51,11 +50,8 @@ async def get_users(
 @router.post("/", response_model=UserResponse)
 async def create_user(user: UserRequest):
     try:
-        await Users.insert(Users(**user.dict())).run()
-        created_user = await Users.select().where(
-            Users.username == user.username
-        )
-        return created_user[0]
+        await insert_user(user)
+        return user
     except UniqueViolationError as e:
         LOGGER.error(e)
         raise HTTPException(
@@ -69,9 +65,8 @@ async def create_user(user: UserRequest):
     dependencies=[Depends(validate_admin_user)],
 )
 async def delete_user(user_id: str):
-    user_id_u = UUID(user_id)
     try:
-        await Users.delete().where(Users.user_id == user_id_u).run()
+        await drop_user(user_id)
         return user_id
     except Exception as e:
         LOGGER.error(e)
@@ -82,22 +77,17 @@ async def delete_user(user_id: str):
 
 @router.get("/me", response_model=UserResponse)
 async def read_users_me(user: JWT = Depends(validate_user)):
-    user_id = UUID(user.user_id)
-    users = (
-        await Users.select().where(Users.user_id == user_id).run()
-    )
-    return UserResponse(**users[0])
+    user = await select_user(user.user_id)
+    return user
 
 
-@router.delete("/me", response_model=UserResponse)
+@router.delete("/me", response_model=bool)
 async def delete_users_me(user: JWT = Depends(validate_user)):
-    user_id = UUID(user.user_id)
-    await Users.update({Users.disabled: True}).where(
-        Users.user_id == user_id
-    ).run()
-
-    users = (
-        await Users.select().where(Users.user_id == user_id).run()
-    )
-
-    return UserResponse(**users[0])
+    try:
+        await deactivate_user(user.user_id)
+        return True
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )

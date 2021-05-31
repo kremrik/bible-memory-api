@@ -2,6 +2,7 @@ from authorization.basic_auth import hash_plaintext_password
 from api.db.models.users import Users
 
 import click
+import uvicorn  # type: ignore
 
 import shlex
 from pprint import pprint
@@ -17,6 +18,11 @@ def manage():
     Helper scripts deployment and management
     """
     pass
+
+
+@manage.command()
+def start_app():
+    uvicorn.run("api.config.asgi:api", host="0.0.0.0", port=8000, reload=True)
 
 
 @manage.group()
