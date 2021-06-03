@@ -96,7 +96,7 @@ async def delete_passage(user_id: str, passage: str):
 
 
 # -------------------------------------------------------------------
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=100)
 def user_id_to_uuid(user_id: Union[str, UUID]) -> UUID:
     if isinstance(user_id, UUID):
         return user_id

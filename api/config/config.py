@@ -8,23 +8,29 @@ __all__ = ["Config"]
 load_dotenv()  # load .env if exists
 
 
-class BaseDotenvSettings(BaseSettings):
+class BaseEnvSettings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
 
 
-class EsvApi(BaseDotenvSettings):
+# settings for ESV api
+# -------------------------------------------------------------------
+class EsvApi(BaseEnvSettings):
     api_key: SecretStr = Field(env="API_KEY")
 
 
-class Auth(BaseDotenvSettings):
+# auth settings
+# -------------------------------------------------------------------
+class Auth(BaseEnvSettings):
     jwt_secret_key: SecretStr = Field(env="JWT_SECRET_KEY")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
 
-class DB(BaseDotenvSettings):
+# database settings
+# -------------------------------------------------------------------
+class DB(BaseEnvSettings):
     driver: str = "postgresql"
     host: str = Field(env="POSTGRES_HOST", default="0.0.0.0")
     database: str = Field(env="POSTGRES_DB")
@@ -33,11 +39,25 @@ class DB(BaseDotenvSettings):
     password: SecretStr = Field(env="POSTGRES_PASSWORD")
 
 
-class Middleware(BaseDotenvSettings):
+# middleware settings
+# -------------------------------------------------------------------
+class ApmMiddleware(BaseEnvSettings):
+    service_name: str = Field(env="APM_SERVICE_NAME")
+    server_url: str = Field(env="APM_SERVER_URL")
+
+
+class CorsMiddleware(BaseEnvSettings):
     cors_regex: str = Field(env="CORS_REGEX")
 
 
-class Config(BaseDotenvSettings):
+class Middleware(BaseEnvSettings):
+    cors: CorsMiddleware = CorsMiddleware()
+    apm: ApmMiddleware = ApmMiddleware()
+
+
+# main config
+# -------------------------------------------------------------------
+class Config(BaseEnvSettings):
     env: str = Field(env="ENVIRONMENT", default="local")
     auth: Auth = Auth()
     middleware: Middleware = Middleware()
