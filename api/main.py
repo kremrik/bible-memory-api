@@ -1,56 +1,37 @@
-from api.middleware.cors import CORS
-from app.parse_to_hints import chapter_to_hints, Chapter
+from api.config import cfg
+from api.logger import configure_logging
+from api.routes import add_routers
+from api.middleware import add_middleware
+from api.db.engine import engine
 
-import aiohttp
-from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from os import environ
+import logging
+import logging.config
 
 
-load_dotenv()
-API_KEY = environ.get("API_KEY")
+__all__ = ["start"]
 
 
-app = FastAPI()
-app.add_middleware(**CORS)
+configure_logging()
+LOGGER = logging.getLogger(__name__)
 
 
-@app.get("/passage/{passage}", response_model=Chapter)
-async def passage(passage: str, initial_size: int = 3, hint_size: int = 3):
-    response = await request(passage)
-    chapter = 3
-    data = chapter_to_hints(
-        passage=response["passages"][0],
-        chapter=chapter,
-        initial_hint_size=initial_size,
-        remainder_size=hint_size
-    )
-    return data
+def start():
+    LOGGER.info(cfg)
+    app = FastAPI()
 
+    @app.on_event("startup")
+    async def create_db_conn():
+        LOGGER.info("Creating database connection pool")
+        await engine.start_connection_pool()
 
-@app.get("/")
-async def root():
-    return {"message": __file__}
+    @app.on_event("shutdown")
+    async def destroy_db_conn():
+        LOGGER.info("Shutting down database connection pool")
+        await engine.close_connection_pool()
 
+    add_routers(app)
+    add_middleware(app)
 
-async def request(passage: str):
-    url = "https://api.esv.org/v3/passage/text/"
-    headers = {
-        "accept": "application/json",
-        "Authorization": f"Token {API_KEY}",
-    }
-    params = {
-        "q": passage,
-        "include-passage-references": "false",
-        "include-footnotes": "false",
-        "include-headings": "false",
-        "include-short-copyright": "false",
-    }
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            url, headers=headers, params=params
-        ) as resp:
-            response = await resp.json()
-            return response
+    return app

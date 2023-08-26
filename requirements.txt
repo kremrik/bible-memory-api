@@ -1,1 +1,12 @@
-
+aiohttp==3.7.3
+aiosqlite==0.16.1
+bcrypt==3.2.0
+elastic-apm==6.2.1
+fastapi==0.63.0
+passlib==1.7.4
+pyparsing==2.4.7
+python-dotenv==0.16.0
+python-jose==3.2.0
+python-multipart==.0.0.5
+uvicorn==0.13.3
+piccolo==0.19.1

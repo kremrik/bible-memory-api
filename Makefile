@@ -1,6 +1,6 @@
 SHELL := bash
 MODULE := $(shell cat .package-name)
-LINE_LENGTH := 59
+LINE_LENGTH := 69
 NO_COLOR := \e[39m
 BLUE := \e[34m
 GREEN := \e[32m
@@ -8,14 +8,14 @@ GREEN := \e[32m
 #----------------------------------------------------------
 
 .PHONY: check
-check : unit-tests black-format flake8-lint success
+check : unit-tests type-check black-format flake8-lint success
 
 .PHONY: unit-tests
 unit-tests :
 	@echo
 	@echo -e '$(BLUE)unit-tests'
 	@echo -e        '----------$(NO_COLOR)'
-	@python3 -m pytest ./*/test*.py
+	@python3 -m pytest tests
 	
 .PHONY: doc-tests
 doc-tests :
@@ -36,25 +36,23 @@ type-check :
 	@echo
 	@echo -e '$(BLUE)type-check'
 	@echo -e 		'----------$(NO_COLOR)'
-	@mypy ./*/*.py
+	@mypy .
 
 .PHONY: black-format
 black-format :
 	@echo
 	@echo -e '$(BLUE)black-format'
 	@echo -e 		'------------$(NO_COLOR)'
-	@black api -l $(LINE_LENGTH)
-	@black app -l $(LINE_LENGTH)
-	@black tests -l $(LINE_LENGTH)
+	@black api app authorization schemas tests/unit -l $(LINE_LENGTH)
 
 .PHONY: flake8-lint
 flake8-lint :
 	@echo
 	@echo -e '$(BLUE)flake8-lint'
 	@echo -e 		'-----------$(NO_COLOR)'
-	@flake8 $(MODULE) \
+	@flake8 api app authorization schemas \
 		--max-line-length $(LINE_LENGTH) \
-		--ignore=F401,E731,F403 \
+		--ignore=F401,E731,F403,E501,W503 \
 		--count \
 		|| exit 1
 

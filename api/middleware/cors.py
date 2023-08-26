@@ -1,16 +1,14 @@
+from api.config import cfg
+
 from fastapi.middleware.cors import CORSMiddleware
 
 
 __all__ = ["CORS"]
 
 
-origins = [
-    "http://localhost:8081",
-]
-
 CORS = {
     "middleware_class": CORSMiddleware,
-    "allow_origins": origins,
+    "allow_origin_regex": cfg.middleware.cors.cors_regex,
     "allow_credentials": True,
     "allow_methods": ["*"],
     "allow_headers": ["*"],
